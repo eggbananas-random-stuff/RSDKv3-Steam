@@ -92,6 +92,35 @@ if(RETRO_MOD_LOADER)
     )
 endif()
 
+# Borrowed from v4+
+if(RETRO_USE_STEAM)
+	if(RETRO_ARCH STREQUAL "64")
+		set(STEAMWORKS_REDIST_BIN "${STEAMWORKS_SDK_DIR}/redistributable_bin/win64")
+		
+		find_library(STEAM_API_LIB
+			NAMES steam_api64
+			PATHS "${STEAMWORKS_REDIST_BIN}"
+
+			NO_DEFAULT_PATH
+		)
+	elseif(RETRO_ARCH STREQUAL "32")
+		set(STEAMWORKS_REDIST_BIN "${STEAMWORKS_SDK_DIR}/redistributable_bin")
+		
+		find_library(STEAM_API_LIB
+			NAMES steam_api
+			PATHS "${STEAMWORKS_REDIST_BIN}"
+
+			NO_DEFAULT_PATH
+		)
+	endif()
+
+    if(NOT STEAM_API_LIB)
+        message(FATAL_ERROR "Steam API library not found in ${STEAMWORKS_REDIST_BIN}")
+    endif()
+
+	target_link_libraries(RetroEngine ${STEAM_API_LIB})
+endif()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(RetroEngine PRIVATE -Wno-microsoft-cast -Wno-microsoft-exception-spec)
 endif()

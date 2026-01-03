@@ -9,11 +9,16 @@ option(RETRO_MOD_LOADER "Enables or disables the mod loader." ON)
 option(RETRO_USE_HW_RENDER "Enables usage of Hardware Render as an option." ON)
 option(RETRO_DISABLE_PLUS "Disables Plus. Should be set on for any public releases." OFF)
 option(RETRO_ORIGINAL_CODE "Removes any change that differs from the original code, a playable game can't be built this way." OFF)
+option(RETRO_USE_STEAM "Enables Steam API integration." ON)
 
 set(RETRO_SDL_VERSION 2 CACHE STRING "select between SDL2 and SDL1, defaults to SDL2")
 
 if(RETRO_ORIGINAL_CODE)
     set(RETRO_MOD_LOADER OFF)
+endif()
+
+if(RETRO_USE_STEAM)
+    set(STEAMWORKS_SDK_DIR "${CMAKE_SOURCE_DIR}/dependencies/all/steamworks_sdk")
 endif()
 
 set(RETRO_NAME "RSDKv3")
@@ -57,6 +62,19 @@ if(NOT PLATFORM)
     else()
         set(PLATFORM ${CMAKE_SYSTEM_NAME} CACHE STRING "The platform to compile for.")
     endif()
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL 4) # SHOULD work...?
+	message("System is supected to be 32 bit")
+	set(RETRO_ARCH "32")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	message("System is supected to be 64 bit")
+	set(RETRO_ARCH "64")
+else()
+	# Might mean the system is 16/128bit
+	# Or its just because of an error
+	message("Error detecting system architecture")
+	set(RETRO_ARCH "INVALID")
 endif()
 
 include(platforms/${PLATFORM}.cmake)
@@ -173,6 +191,12 @@ if(DEFINED DEP_PATH)
     )
 endif()
 
+if(RETRO_USE_STEAM)
+	target_include_directories(RetroEngine PRIVATE
+		dependencies/all/steamworks_sdk/public/
+	)
+endif()
+
 
 target_compile_definitions(RetroEngine PRIVATE
     RETRO_USE_MOD_LOADER=$<BOOL:${RETRO_MOD_LOADER}>
@@ -180,6 +204,7 @@ target_compile_definitions(RetroEngine PRIVATE
     RETRO_USE_SDL${RETRO_SDL_VERSION}=1
     FORCE_CASE_INSENSITIVE=$<BOOL:${RETRO_FORCE_CASE_INSENSITIVE}>
     RETRO_USE_ORIGINAL_CODE=$<BOOL:${RETRO_ORIGINAL_CODE}>
+    RETRO_USE_STEAMWORKS=$<BOOL:${RETRO_USE_STEAM}>
     
     RSDK_AUTOBUILD=$<BOOL:${RETRO_DISABLE_PLUS}>
     
