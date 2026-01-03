@@ -933,6 +933,20 @@ void ReadUserdata()
 
     if (Engine.onlineActive) {
         // Load from online
+#if RETRO_USE_STEAMWORKS
+//        if (SteamUserStats()->RequestCurrentStats()) {
+        if (Engine.steamInitialised) {
+            char achieveName[0x20];
+            
+            for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
+                if (achievements[a].status > 0) {
+                    sprintf(achieveName, "ACHIEVEMENT_%d", a);
+                    SteamUserStats()->SetAchievement(achieveName);
+                }
+            }
+            SteamUserStats()->StoreStats();
+        }
+#endif
     }
 }
 
@@ -997,6 +1011,15 @@ void AwardAchievement(int id, int status)
 
     if (Engine.onlineActive) {
         // Set Achievement online
+#if RETRO_USE_STEAMWORKS
+        if (Engine.steamInitialised) {
+            char achieveName[0x10];
+            
+            sprintf(achieveName, "ACHIEVEMENT_4");
+            SteamUserStats()->SetAchievement(achieveName);
+            SteamUserStats()->StoreStats();
+        }
+#endif
     }
     WriteUserdata();
 }

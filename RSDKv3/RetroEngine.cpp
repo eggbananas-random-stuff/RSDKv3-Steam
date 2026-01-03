@@ -280,6 +280,25 @@ void RetroEngine::Init()
 #if RETRO_USE_MOD_LOADER
     InitMods();
 #endif
+#if RETRO_USE_STEAMWORKS
+    steamInitialised = false;
+
+    SteamErrMsg errMsg;
+    PrintLog("Initializing steam...");
+
+    if (SteamAPI_RestartAppIfNecessary(k_uAppIdInvalid)) {
+        //running = false;
+    }
+
+    if (SteamAPI_InitEx(&errMsg) != k_ESteamAPIInitResult_OK )
+        PrintLog("Failed to init Steam. %s", errMsg);
+
+    if (!SteamAPI_Init()) {
+        PrintLog("Failed to init Steam. See previous error.");
+    } else {
+        steamInitialised = true;
+    }
+#endif
     char dest[0x200];
 #if RETRO_PLATFORM == RETRO_UWP
     static char resourcePath[256] = { 0 };

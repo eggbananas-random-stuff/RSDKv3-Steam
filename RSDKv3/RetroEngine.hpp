@@ -19,6 +19,10 @@
 #define RSDK_AUTOBUILD (0)
 #endif
 
+#ifndef RETRO_USE_STEAMWORKS
+#define RETRO_USE_STEAMWORKS (1)
+#endif
+
 // ================
 // STANDARD LIBS
 // ================
@@ -27,6 +31,9 @@
 #include <cmath>
 #if RETRO_USE_MOD_LOADER
 #include <regex>
+#endif
+#if RETRO_USE_STEAMWORKS
+#include "steam/steam_api.h"
 #endif
 
 // ================
@@ -525,6 +532,9 @@ public:
 
 #if RETRO_USE_MOD_LOADER
     bool modMenuCalled = false;
+#endif
+#if RETRO_USE_STEAMWORKS
+    bool steamInitialised = false;
 #endif
 
     int gameTypeID          = 0;
