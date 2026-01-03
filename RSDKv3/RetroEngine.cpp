@@ -290,7 +290,7 @@ void RetroEngine::Init()
         //running = false;
     }
 
-    if (SteamAPI_InitEx(&errMsg) != k_ESteamAPIInitResult_OK )
+    if (SteamAPI_InitEx(&errMsg) != k_ESteamAPIInitResult_OK)
         PrintLog("Failed to init Steam. %s", errMsg);
 
     if (!SteamAPI_Init()) {
