@@ -6,7 +6,6 @@ A complete decompilation of Retro Engine v3.
 + This requires you to either [build the decompilation yourself](#How to Build), or [download a release](../releases)
 
 + To access the game folder from Steam;
-+ Windows
   * Open CD's game page in your library
   * Click the cog/settings icon
   * Select "Properties..." > "Installed Files" > "Browse..."
