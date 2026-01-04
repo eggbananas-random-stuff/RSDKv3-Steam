@@ -19,7 +19,7 @@ A complete decompilation of Retro Engine v3.
     * Insert the `RSDKv3.appimage` file (that you have downloaded/compiled) into the game folder
     * Open Sonic CD's page in your Steam Library
     * Click the cog/settings icon
-    * Select "Properties..." > "General"
+    * Select "`Properties...`" > "`General`"
     * Click on the launch options text box
     * Type `"./RSDKv3.appimage" %command%`
 
