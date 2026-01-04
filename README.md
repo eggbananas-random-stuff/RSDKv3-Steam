@@ -3,7 +3,7 @@
 A complete decompilation of Retro Engine v3.
 
 # Setup
-+ This requires you to either [build the decompilation yourself](#how-to-build), or [download a release](../releases)
++ This requires you to either [build the decompilation yourself](#how-to-build), or [download a release](https://github.com/eggbananas-random-stuff/RSDKv3-Steam/releases).
 
 + To access the game folder from Steam;
   * Open CD's game page in your library
