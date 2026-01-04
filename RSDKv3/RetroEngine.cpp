@@ -284,7 +284,7 @@ void RetroEngine::Init()
     steamInitialised = false;
 
     SteamErrMsg errMsg;
-    PrintLog("Initializing steam...");
+    PrintLog("Initialising steam...");
 
     if (SteamAPI_RestartAppIfNecessary(k_uAppIdInvalid)) {
         //running = false;
@@ -296,6 +296,7 @@ void RetroEngine::Init()
     if (!SteamAPI_Init()) {
         PrintLog("Failed to init Steam. See previous error.");
     } else {
+        PrintLog("Steam initialised successfully.");
         steamInitialised = true;
     }
 #endif

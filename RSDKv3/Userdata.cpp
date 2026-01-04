@@ -934,13 +934,13 @@ void ReadUserdata()
     if (Engine.onlineActive) {
         // Load from online
 #if RETRO_USE_STEAMWORKS
-//        if (SteamUserStats()->RequestCurrentStats()) {
+        //if (SteamUserStats()->RequestCurrentStats()) { // Not necessary anymore
         if (Engine.steamInitialised) {
             char achieveName[0x20];
             
             for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
                 if (achievements[a].status > 0) {
-                    sprintf(achieveName, "ACHIEVEMENT_%d", a);
+                    sprintf(achieveName, "ACHIEVEMENT_%d", a); // thanks steamdb
                     SteamUserStats()->SetAchievement(achieveName);
                 }
             }
@@ -1007,20 +1007,26 @@ void AwardAchievement(int id, int status)
     if (status != achievements[id].status)
         PrintLog("Achieved achievement: %s (%d)!", achievements[id].name, status);
 
-    achievements[id].status = status;
+    // Steam rate limits StoreStats(), so we'll move this further down
+    //achievements[id].status = status;
 
     if (Engine.onlineActive) {
         // Set Achievement online
 #if RETRO_USE_STEAMWORKS
         if (Engine.steamInitialised) {
-            char achieveName[0x10];
-            
-            sprintf(achieveName, "ACHIEVEMENT_4");
-            SteamUserStats()->SetAchievement(achieveName);
-            SteamUserStats()->StoreStats();
+            if (status != achievements[id].status) { // Just so we don't get rate limited
+                char achieveName[0x10];
+                
+                sprintf(achieveName, "ACHIEVEMENT_%d", id);
+                SteamUserStats()->SetAchievement(achieveName);
+                SteamUserStats()->StoreStats();
+            }
         }
 #endif
     }
+
+    achievements[id].status = status;
+
     WriteUserdata();
 }
 

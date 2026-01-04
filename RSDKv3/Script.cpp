@@ -1826,6 +1826,9 @@ void ParseScriptFile(char *scriptName, int scriptID)
 #if RETRO_USE_MOD_LOADER
                                 && FindStringToken(scriptText, "Use_Mod_Loader", 1) == -1
 #endif
+#if RETRO_USE_STEAMWORKS
+                                && FindStringToken(scriptText, "Use_Steam_API", 1) == -1
+#endif
                             ) { // if NONE of these checks succeeded, then we skip everything until "end platform"
                                 parseMode = PARSEMODE_PLATFORMSKIP;
                             }
