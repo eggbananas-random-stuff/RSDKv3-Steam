@@ -8,19 +8,20 @@ A complete decompilation of Retro Engine v3.
 + To access the game folder from Steam;
   * Open CD's game page in your library
   * Click the cog/settings icon
-  * Select "Properties..." > "Installed Files" > "Browse..."
+  * Select "`Properties...`" > "`Installed Files`" > "`Browse...`"
   * The game folder should be open in your file manager
 
-+ Windows
-  * Rename the `soniccd.exe` file in the game folder to something else
-  * Rename the `RSDKv3.exe` file (that you have downloaded/compiled) to `soniccd.exe`, then insert it into the game folder
-+ Steam Deck/Linux
-  * Insert the `RSDKv3.appimage` file (that you have downloaded/compiled) into the game folder
-  * Open Sonic CD's page in your Steam Library
-  * Click the cog/settings icon
-  * Select "Properties..." > "General"
-  * Click on the launch options text box
-  * Type `"./RSDKv3.appimage" %command%`
++ Setting up the game itself
+  * Windows
+    * Rename the `soniccd.exe` file in the game folder to something else
+    * Rename the `RSDKv3.exe` file (that you have downloaded/compiled) to `soniccd.exe`, then insert it into the game folder
+  * Steam Deck/Linux
+    * Insert the `RSDKv3.appimage` file (that you have downloaded/compiled) into the game folder
+    * Open Sonic CD's page in your Steam Library
+    * Click the cog/settings icon
+    * Select "Properties..." > "General"
+    * Click on the launch options text box
+    * Type `"./RSDKv3.appimage" %command%`
 
 + You can also use your main save by copying it to the game folder
 + Remember to replace `<STEAM USER ID>` with your steam user ID
