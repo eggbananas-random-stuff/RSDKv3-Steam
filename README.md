@@ -5,15 +5,15 @@ A complete decompilation of Retro Engine v3.
 # Setup
 + This requires you to either [build the decompilation yourself](#How to Build), or [download a release](../releases)
 + To access the game folder from Steam;
- * Open CD's game page in your library
- * Click the cog/settings icon
- * Select "Properties..." > "Installed Files" > "Browse..."
- * The game folder should be open in your file manager
+  * Open CD's game page in your library
+  * Click the cog/settings icon
+  * Select "Properties..." > "Installed Files" > "Browse..."
+  * The game folder should be open in your file manager
 
-+ **Windows**
++ Windows
   * Rename the `soniccd.exe` file in the game folder to something else
   * Rename the `RSDKv3.exe` file (that you have downloaded/compiled) to `soniccd.exe`, then insert it into the game folder
-+ **Steam Deck/Linux**
++ Steam Deck/Linux
   * Insert the `RSDKv3.appimage` file (that you have downloaded/compiled) into the game folder
   * Open Sonic CD's page in your Steam Library
   * Click the cog/settings icon
@@ -24,11 +24,11 @@ A complete decompilation of Retro Engine v3.
 + You can also use your main save by copying it to the game folder
 + Remember to replace `<STEAM USER ID>` with your steam user ID
 + (If there is only one folder in the `userdata` folder, just use that)
-  * **Windows**
+  * Windows
     * `C:\Program Files (x86)\Steam\userdata\<STEAM USER ID>\200940\local`
-  * **Steam Deck/Linux**
+  * Steam Deck/Linux
     * `~/.local/share/Steam/userdata/<STEAM USER ID>/200940/local`
-  * **Linux (Flatpak)**
+  * Linux (Flatpak)
     * `~/.var/app/com.valvesoftware.Steam/data/Steam/userdata/<STEAM USER ID>/200940/local`
 + Copy the `Sdata.bin` file to the game folder, then rename the copy to `SData.bin`
 
