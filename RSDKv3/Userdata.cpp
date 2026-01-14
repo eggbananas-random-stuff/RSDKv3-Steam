@@ -935,7 +935,7 @@ void ReadUserdata()
         // Load from online
 #if RETRO_USE_STEAMWORKS
         //if (SteamUserStats()->RequestCurrentStats()) { // Not necessary anymore
-        if (Engine.steamInitialised) {
+        if (Engine.steamInitialised && Engine.steamAppID == STEAMGAME_SONIC_CD) {
             char achieveName[0x20];
             
             for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
@@ -1013,7 +1013,7 @@ void AwardAchievement(int id, int status)
     if (Engine.onlineActive) {
         // Set Achievement online
 #if RETRO_USE_STEAMWORKS
-        if (Engine.steamInitialised) {
+        if (Engine.steamInitialised && Engine.steamAppID == STEAMGAME_SONIC_CD) {
             if (status != achievements[id].status) { // Just so we don't get rate limited
                 char achieveName[0x10];
                 
@@ -1049,4 +1049,36 @@ void SetLeaderboard(int leaderboardID, int result)
                      leaderboards[leaderboardID].score);
         }
     }
+}
+
+int AwardSteamAchievement(int steamGameID, char *achievementName, int achievementType, int progressIncrement) {
+#if RETRO_USE_STEAMWORKS
+    if (!Engine.steamInitialised || Engine.steamAppID != steamGameID)
+        return -1;
+    
+    bool isAchieved = false;
+    int32 achieveValue = -1;
+    
+    switch (achievementType) {
+        default: break;
+        case 0:
+            if (SteamUserStats()->GetAchievement(achievementName, &isAchieved) && !isAchieved) {
+                SteamUserStats()->SetAchievement(achievementName);
+                SteamUserStats()->StoreStats();
+                
+                achieveValue = true;
+            }
+            break;
+        case 1:
+            if (!SteamUserStats()->GetStat(achievementName, &isAchieved)) {
+                SteamUserStats()->GetStat(achievementName, &achieveValue);
+                SteamUserStats()->SetStat(achievementName, achieveValue + progressIncrement);
+                
+                SteamUserStats()->StoreStats();
+            }
+            break;
+    }
+    
+    return achieveValue;
+#endif
 }

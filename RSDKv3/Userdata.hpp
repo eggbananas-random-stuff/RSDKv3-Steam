@@ -15,6 +15,12 @@ enum OnlineMenuTypes {
     ONLINEMENU_LEADERBOARDS = 1,
 };
 
+enum SteamGameIDs {
+    STEAMGAME_NONE          = 0, //probably the default? idk
+    STEAMGAME_SONIC_CD      = 200940,
+    STEAMGAME_SONIC_ORIGINS = 1794960,
+};
+
 struct Achievement {
     char name[0x40];
     int status;
@@ -83,6 +89,7 @@ void WriteUserdata();
 void AwardAchievement(int id, int status);
 void SetAchievement(int achievementID, int achievementDone);
 void SetLeaderboard(int leaderboardID, int result);
+int AwardSteamAchievement(int steamGameID, char *achievementName, int achievementType = 0, int progressIncrement = 1);
 inline void LoadAchievementsMenu() { ReadUserdata(); }
 inline void LoadLeaderboardsMenu() { ReadUserdata(); }
 

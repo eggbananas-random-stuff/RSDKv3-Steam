@@ -535,6 +535,7 @@ public:
 #endif
 #if RETRO_USE_STEAMWORKS
     bool steamInitialised = false;
+    int steamAppID        = 0;
 #endif
 
     int gameTypeID          = 0;

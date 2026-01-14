@@ -294,6 +294,8 @@ const char variableNames[][0x20] = {
 #if RETRO_USE_HAPTICS
     "Engine.HapticsEnabled",
 #endif
+    "Engine.SteamInitialised",
+    "Engine.SteamAppID",
 };
 #endif
 
@@ -435,6 +437,7 @@ const FunctionInfo functions[] = {
 #if RETRO_USE_HAPTICS
     FunctionInfo("HapticEffect", 4),
 #endif
+    FunctionInfo("SetSteamAchievement", 3),
 };
 
 #if RETRO_USE_COMPILER
@@ -720,6 +723,8 @@ enum ScrVariable {
 #if RETRO_USE_HAPTICS
     VAR_ENGINEHAPTICSENABLED,
 #endif
+    VAR_ENGINESTEAMINITIALISED,
+    VAR_ENGINESTEAMAPPID,
     VAR_MAX_CNT
 };
 
@@ -861,6 +866,7 @@ enum ScrFunction {
 #if RETRO_USE_HAPTICS
     FUNC_HAPTICEFFECT,
 #endif
+    FUNC_SETSTEAMACHIEVEMENT,
     FUNC_MAX_CNT
 };
 
@@ -2851,6 +2857,10 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptSub)
 #if RETRO_USE_HAPTICS
                     case VAR_ENGINEHAPTICSENABLED: scriptEng.operands[i] = Engine.hapticsEnabled; break;
 #endif
+#if RETRO_USE_STEAMWORKS
+                    case VAR_ENGINESTEAMINITIALISED: scriptEng.operands[i] = Engine.steamInitialised; break;
+                    case VAR_ENGINESTEAMAPPID: scriptEng.operands[i] = Engine.steamAppID; break;
+#endif
                 }
             }
             else if (opcodeType == SCRIPTVAR_INTCONST) { // int constant
@@ -4068,6 +4078,13 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptSub)
                     PlayHaptics(scriptEng.operands[1], scriptEng.operands[2], scriptEng.operands[3]);
                 break;
 #endif
+            case FUNC_SETSTEAMACHIEVEMENT:
+                opcodeSize = 0;
+#if RETRO_USE_STEAMWORKS
+                //SetSteamAchievement(int steamGameID, string achievementName, int achievementType, int progressIncrement)
+                AwardSteamAchievement(scriptEng.operands[0], scriptText, scriptEng.operands[1], scriptEng.operands[2]);
+#endif
+                break;
         }
 
         // Set Values
@@ -4685,6 +4702,10 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptSub)
                     case VAR_KEYPRESSANYSTART: break;
 #if RETRO_USE_HAPTICS
                     case VAR_ENGINEHAPTICSENABLED: Engine.hapticsEnabled = scriptEng.operands[i]; break;
+#endif
+#if RETRO_USE_STEAMWORKS
+                    case VAR_ENGINESTEAMINITIALISED: Engine.steamInitialised = scriptEng.operands[i]; break;
+                    case VAR_ENGINESTEAMAPPID: Engine.steamAppID = scriptEng.operands[i]; break;
 #endif
                 }
             }

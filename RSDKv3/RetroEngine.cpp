@@ -282,6 +282,7 @@ void RetroEngine::Init()
 #endif
 #if RETRO_USE_STEAMWORKS
     steamInitialised = false;
+    steamAppID       = 0;
 
     SteamErrMsg errMsg;
     PrintLog("Initialising steam...");
@@ -298,6 +299,7 @@ void RetroEngine::Init()
     } else {
         PrintLog("Steam initialised successfully.");
         steamInitialised = true;
+        steamAppID       = SteamUtils()->GetAppID();
     }
 #endif
     char dest[0x200];
@@ -1381,16 +1383,28 @@ void RetroEngine::Callback(int callbackID)
         case NOTIFY_FUTURE_PAST:
             PrintLog("NOTIFY: FuturePast() -> %d", notifyParam1);
             objectEntityList[objectLoop].state++;
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_07_SONICCD_TIME_WARP");
             break;
         case NOTIFY_GOTO_FUTURE_PAST: PrintLog("NOTIFY: GotoFuturePast() -> %d", notifyParam1); break;
         case NOTIFY_BOSS_END: PrintLog("NOTIFY: BossEnd() -> %d", notifyParam1); break;
         case NOTIFY_SPECIAL_END: PrintLog("NOTIFY: SpecialEnd() -> %d", notifyParam1); break;
         case NOTIFY_DEBUGPRINT: PrintLog("NOTIFY: DebugPrint() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
-        case NOTIFY_KILL_BOSS: PrintLog("NOTIFY: KillBoss() -> %d", notifyParam1); break;
+        case NOTIFY_KILL_BOSS: PrintLog("NOTIFY: KillBoss() -> %d", notifyParam1);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_08_SONICCD_WIN_METAL_SONIC");
+            break;
         case NOTIFY_TOUCH_EMERALD: PrintLog("NOTIFY: TouchEmerald() -> %d", notifyParam1); break;
-        case NOTIFY_STATS_ENEMY: PrintLog("NOTIFY: StatsEnemy() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
-        case NOTIFY_STATS_CHARA_ACTION: PrintLog("NOTIFY: StatsCharaAction() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
-        case NOTIFY_STATS_RING: PrintLog("NOTIFY: StatsRing() -> %d", notifyParam1); break;
+        case NOTIFY_STATS_ENEMY: PrintLog("NOTIFY: StatsEnemy() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_14_DEFEAT_ENEMY_BY_SPIN_DASH", 1, notifyParam2);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_15_NOVICE_HERO", 1, notifyParam1);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_29_HERO_FOR_ALL", 1, notifyParam1);
+            break;
+        case NOTIFY_STATS_CHARA_ACTION: PrintLog("NOTIFY: StatsCharaAction() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
+            if (notifyParam2 == 1)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_19_TAILS_FLYING");
+            break;
+        case NOTIFY_STATS_RING: PrintLog("NOTIFY: StatsRing() -> %d", notifyParam1);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_13_RING_COLLECTOR", 1, notifyParam1);
+            break;
         case NOTIFY_STATS_MOVIE:
             PrintLog("NOTIFY: StatsMovie() -> %d", notifyParam1);
             ClearGraphicsData();
@@ -1403,6 +1417,8 @@ void RetroEngine::Callback(int callbackID)
             stageMode         = STAGEMODE_LOAD;
             Engine.gameMode   = ENGINE_MAINGAME;
             stageListPosition = 0;
+            
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_32_SONICCD_CLEAR_ALL_STAGE");
             break;
         case NOTIFY_STATS_PARAM_1: PrintLog("NOTIFY: StatsParam1() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
         case NOTIFY_STATS_PARAM_2: PrintLog("NOTIFY: StatsParam2() -> %d", notifyParam1); break;
@@ -1434,7 +1450,10 @@ void RetroEngine::Callback(int callbackID)
         case NOTIFY_TIMEATTACK_MODE: PrintLog("NOTIFY: TimeAttackMode() -> %d", notifyParam1); break;
         case NOTIFY_STATS_BREAK_OBJECT: PrintLog("NOTIFY: StatsBreakObject() -> %d, %d", notifyParam1, notifyParam2); break;
         case NOTIFY_STATS_SAVE_FUTURE: PrintLog("NOTIFY: StatsSaveFuture() -> %d", notifyParam1); break;
-        case NOTIFY_STATS_CHARA_ACTION2: PrintLog("NOTIFY: StatsCharaAction2() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
+        case NOTIFY_STATS_CHARA_ACTION2: PrintLog("NOTIFY: StatsCharaAction2() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
+            if (notifyParam1 == 1)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_18_KNUCKLES_GLIDING");
+            break;
 
         // Sega Forever stuff
         case CALLBACK_STARTGAME:
@@ -1443,6 +1462,9 @@ void RetroEngine::Callback(int callbackID)
             // Set lives count and the like
             SetGlobalVariableByName("Config.NumOfLives", 3);
             SetGlobalVariableByName("Config.IsPremiumUser", 1);
+            
+            // we gotta set it somewhere ig
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_02_SONICCD_WATCH_OPENING");
             break;
         case CALLBACK_SHOWURL: PrintLog("Callback: showURL(\"https://www.sega.com\")"); break;
         case CALLBACK_SHOWMENU_2: PrintLog("Callback: showMenu(2)"); break;
