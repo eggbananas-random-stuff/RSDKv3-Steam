@@ -998,7 +998,7 @@ void SetLeaderboard(int leaderboardID, int result)
     }
 }
 
-int AwardSteamAchievement(int steamGameID, char *achievementName, int achievementType, int progressIncrement) {
+int AwardSteamAchievement(int steamGameID, const char *achievementName, int achievementType, int progressIncrement) {
 #if RETRO_USE_STEAMWORKS
     if (!Engine.steamInitialised || Engine.steamAppID != steamGameID)
         return -1;

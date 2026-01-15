@@ -89,7 +89,7 @@ void WriteUserdata();
 void AwardAchievement(int id, int status);
 void SetAchievement(int achievementID, int achievementDone);
 void SetLeaderboard(int leaderboardID, int result);
-int AwardSteamAchievement(int steamGameID, char *achievementName, int achievementType = 0, int progressIncrement = 1);
+int AwardSteamAchievement(int steamGameID, const char *achievementName, int achievementType = 0, int progressIncrement = 1);
 inline void LoadAchievementsMenu() { ReadUserdata(); }
 inline void LoadLeaderboardsMenu() { ReadUserdata(); }
 
