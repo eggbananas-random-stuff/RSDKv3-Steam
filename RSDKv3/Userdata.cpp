@@ -877,12 +877,13 @@ void ReadUserdata()
 
     fClose(userFile);
 
-    if (Engine.onlineActive) {
+    if (Engine.onlineActive && !Engine.trialMode && !debugMode) {
         // Load from online
 #if RETRO_USE_STEAMWORKS
         //if (SteamUserStats()->RequestCurrentStats()) { // Not necessary anymore
         if (Engine.steamInitialised && Engine.steamAppID == STEAMGAME_SONIC_CD) {
             char achieveName[0x20];
+            bool isAchieved;
             
             for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
                 if (achievements[a].status > 0) {
@@ -891,6 +892,13 @@ void ReadUserdata()
                 }
             }
             SteamUserStats()->StoreStats();
+            
+            for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
+                sprintf(achieveName, "ACHIEVEMENT_%d", a); // thanks steamdb
+                if (SteamUserStats()->GetAchievement(achieveName, &isAchieved) && isAchieved) {
+                    SetAchievement(a, true);
+                }
+            }
         }
 #endif
     }
