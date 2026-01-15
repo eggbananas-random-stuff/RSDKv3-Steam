@@ -1017,7 +1017,7 @@ int AwardSteamAchievement(int steamGameID, const char *achievementName, int achi
             }
             break;
         case 1:
-            if (!SteamUserStats()->GetStat(achievementName, &isAchieved)) {
+            if (!SteamUserStats()->GetStat(achievementName, &achieveValue)) {
                 SteamUserStats()->GetStat(achievementName, &achieveValue);
                 SteamUserStats()->SetStat(achievementName, achieveValue + progressIncrement);
                 
