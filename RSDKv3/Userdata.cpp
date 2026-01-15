@@ -282,20 +282,19 @@ void InitUserdata()
 {
     // userdata files are loaded from this directory
     sprintf(gamePath, "%s", BASE_PATH);
-#if RETRO_USE_MOD_LOADER
-    sprintf(modsPath, "%s", BASE_PATH);
-#endif
 #if RETRO_USE_STEAMWORKS
     bool prevVal = engineDebugMode;
     if (Engine.steamInitialised
      && Engine.useSteamDir
      && Engine.steamAppID == STEAMGAME_SONIC_CD
-     && SteamUser()->GetUserDataFolder(gamePath, sizeof(gamePath) - 10)) {
+     && SteamUser()->GetUserDataFolder(gamePath, sizeof(gamePath) - 1)) {
         PrintLog("Found CD Steam save directory: '%s'", gamePath);
         sprintf(gamePath, "%s/", gamePath);
     } else {
         PrintLog("Steam save directory not found.");
     }
+#endif
+#if RETRO_USE_MOD_LOADER
     sprintf(modsPath, "%s", gamePath);
 #endif
 
