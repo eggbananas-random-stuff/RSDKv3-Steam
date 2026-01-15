@@ -285,6 +285,19 @@ void InitUserdata()
 #if RETRO_USE_MOD_LOADER
     sprintf(modsPath, "%s", BASE_PATH);
 #endif
+#if RETRO_USE_STEAMWORKS
+    bool prevVal = engineDebugMode;
+    if (Engine.steamInitialised
+     && Engine.useSteamDir
+     && Engine.steamAppID == STEAMGAME_SONIC_CD
+     && SteamUser()->GetUserDataFolder(gamePath, sizeof(gamePath) - 10)) {
+        PrintLog("Found CD Steam save directory: '%s'", gamePath);
+        sprintf(gamePath, "%s/", gamePath);
+    } else {
+        PrintLog("Steam save directory not found.");
+    }
+    sprintf(modsPath, "%s", gamePath);
+#endif
 
 #if RETRO_PLATFORM == RETRO_OSX
     getResourcesPath(gamePath, sizeof(gamePath));
@@ -345,9 +358,7 @@ void InitUserdata()
         ini.SetInteger("Dev", "StartingCategory", Engine.startList = 0);
         ini.SetInteger("Dev", "StartingScene", Engine.startStage = 0);
         ini.SetInteger("Dev", "FastForwardSpeed", Engine.fastForwardSpeed = 8);
-#if RETRO_PLATFORM == RETRO_WINDOWS
-        ini.SetBool("Dev", "UseSteamDir", Engine.useSteamDir = false);
-#endif
+        ini.SetBool("Dev", "UseSteamDir", Engine.useSteamDir = RETRO_USE_STEAMWORKS);
         ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = true);
         sprintf(Engine.dataFile, "%s", "Data.rsdk");
         ini.SetString("Dev", "DataFile", Engine.dataFile);
@@ -454,10 +465,8 @@ void InitUserdata()
             Engine.startStage = 0;
         if (!ini.GetInteger("Dev", "FastForwardSpeed", &Engine.fastForwardSpeed))
             Engine.fastForwardSpeed = 8;
-#if RETRO_PLATFORM == RETRO_WINDOWS
         if (!ini.GetBool("Dev", "UseSteamDir", &Engine.useSteamDir))
-            Engine.useSteamDir = false;
-#endif
+            Engine.useSteamDir = RETRO_USE_STEAMWORKS;
         if (!ini.GetBool("Dev", "UseHQModes", &Engine.useHQModes))
             Engine.useHQModes = true;
 
@@ -627,66 +636,6 @@ void InitUserdata()
 #endif
     }
 
-    // Loaded here so it can be disabled
-#if RETRO_PLATFORM == RETRO_WIN && _MSC_VER
-    if (Engine.useSteamDir) {
-#if _WIN64
-        LONG lRes             = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Wow6432Node\\Valve\\Steam", 0, KEY_READ, &hKey);
-        bool existsAndSuccess = lRes == ERROR_SUCCESS;
-        std::wstring steamPath;
-
-        if (existsAndSuccess) {
-            GetStringRegKey(hKey, L"InstallPath", steamPath, L"");
-
-            std::ifstream file(steamPath + L"/config/loginusers.vdf");
-            auto root = tyti::vdf::read(file);
-
-            std::vector<long long> SIDs;
-            for (auto &child : root.childs) {
-                long long sidVal = std::stoll(child.first);
-                SIDs.push_back(sidVal & 0xFFFFFFFF);
-            }
-
-            for (auto &sid : SIDs) {
-                std::wstring udataPath = steamPath.c_str() + std::wstring(L"/userdata/") + std::to_wstring(sid) + std::wstring(L"/200940/local/");
-
-                if (dirExists(udataPath)) {
-                    sprintf(gamePath, "%s", utf16ToUtf8(udataPath).c_str());
-                    break;
-                }
-            }
-        }
-
-#elif _WIN32
-        LONG lRes             = RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Valve\\Steam", 0, KEY_READ, &hKey);
-        bool existsAndSuccess = lRes == ERROR_SUCCESS;
-        std::wstring steamPath;
-
-        if (existsAndSuccess) {
-            GetStringRegKey(hKey, L"InstallPath", steamPath, L"");
-
-            std::ifstream file(steamPath + L"/config/loginusers.vdf");
-            auto root = tyti::vdf::read(file);
-
-            std::vector<long long> SIDs;
-            for (auto &child : root.childs) {
-                long long sidVal = std::stoll(child.first);
-                SIDs.push_back(sidVal & 0xFFFFFFFF);
-            }
-
-            for (auto &sid : SIDs) {
-                std::wstring udataPath = steamPath.c_str() + std::wstring(L"/userdata/") + std::to_wstring(sid) + std::wstring(L"/200940/local/");
-
-                if (dirExists(udataPath)) {
-                    sprintf(gamePath, "%s", utf16ToUtf8(udataPath).c_str());
-                    break;
-                }
-            }
-        }
-#endif
-    }
-#endif
-
     // Support for extra controller types SDL doesn't recognise
 #if RETRO_PLATFORM == RETRO_UWP
     if (!usingCWD)
@@ -764,10 +713,8 @@ void WriteSettings()
     ini.SetInteger("Dev", "StartingScene", Engine.startStage);
     ini.SetComment("Dev", "FFComment", "Determines how fast the game will be when fastforwarding is active");
     ini.SetInteger("Dev", "FastForwardSpeed", Engine.fastForwardSpeed);
-#if RETRO_PLATFORM == RETRO_WINDOWS
     ini.SetComment("Dev", "SDComment", "Determines if the game will try to use the steam directory for the game if it can locate it");
     ini.SetBool("Dev", "UseSteamDir", Engine.useSteamDir);
-#endif
     ini.SetComment(
         "Dev", "UseHQComment",
         "Determines if applicable rendering modes (such as 3D floor from special stages) will render in \"High Quality\" mode or standard mode");

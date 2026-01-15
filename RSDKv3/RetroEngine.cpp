@@ -276,10 +276,33 @@ void RetroEngine::Init()
 {
     CalculateTrigAngles();
     GenerateBlendLookupTable();
-    InitUserdata();
-#if RETRO_USE_MOD_LOADER
-    InitMods();
+
+    // Cheat to enable the log early
+#if !RETRO_USE_ORIGINAL_CODE
+    char buffer[0x200];
+#if RETRO_PLATFORM == RETRO_UWP
+    if (!usingCWD)
+        sprintf(buffer, "%s/settings.ini", getResourcesPath());
+    else
+        sprintf(buffer, "%ssettings.ini", gamePath);
+#elif RETRO_PLATFORM == RETRO_OSX || RETRO_PLATFORM == RETRO_ANDROID
+    sprintf(buffer, "%s/settings.ini", gamePath);
+#elif RETRO_PLATFORM == RETRO_iOS
+    sprintf(buffer, "%s/settings.ini", getDocumentsPath());
+//#elif RETRO_PLATFORM == RETRO_LINUX
+  //  sprintf(buffer, "%s/settings.ini", getXDGDataPath().c_str());
+#else
+    sprintf(buffer, BASE_PATH "settings.ini");
 #endif
+    FileIO *file = fOpen(buffer, "rb");
+    IniParser ini;
+    if (file) {
+        fClose(file);
+        ini = IniParser(buffer, false);
+        ini.GetBool("Dev", "EngineDebugMode", &engineDebugMode);
+    }
+#endif
+
 #if RETRO_USE_STEAMWORKS
     steamInitialised = false;
     steamAppID       = 0;
@@ -301,6 +324,10 @@ void RetroEngine::Init()
         steamInitialised = true;
         steamAppID       = SteamUtils()->GetAppID();
     }
+#endif
+    InitUserdata();
+#if RETRO_USE_MOD_LOADER
+    InitMods();
 #endif
     char dest[0x200];
 #if RETRO_PLATFORM == RETRO_UWP

@@ -461,7 +461,7 @@ public:
     int frameSkipSetting = 0;
     int frameSkipTimer   = 0;
 
-    bool useSteamDir = false;
+    bool useSteamDir = RETRO_USE_STEAMWORKS;
 
 #if !RETRO_USE_ORIGINAL_CODE
     // Ported from RSDKv5
