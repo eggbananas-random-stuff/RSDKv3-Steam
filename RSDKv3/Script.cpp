@@ -437,7 +437,7 @@ const FunctionInfo functions[] = {
 #if RETRO_USE_HAPTICS
     FunctionInfo("HapticEffect", 4),
 #endif
-    FunctionInfo("SetSteamAchievement", 3),
+    FunctionInfo("SetSteamAchievement", 4),
 };
 
 #if RETRO_USE_COMPILER
@@ -4082,7 +4082,7 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptSub)
                 opcodeSize = 0;
 #if RETRO_USE_STEAMWORKS
                 //SetSteamAchievement(int steamGameID, string achievementName, int achievementType, int progressIncrement)
-                AwardSteamAchievement(scriptEng.operands[0], scriptText, scriptEng.operands[1], scriptEng.operands[2]);
+                AwardSteamAchievement(scriptEng.operands[0], scriptText, scriptEng.operands[2], scriptEng.operands[3]);
 #endif
                 break;
         }
