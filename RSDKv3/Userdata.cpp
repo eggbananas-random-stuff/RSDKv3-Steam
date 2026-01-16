@@ -894,7 +894,7 @@ void ReadUserdata()
             SteamUserStats()->StoreStats();
             
             for (int a = 0; a < ACHIEVEMENT_COUNT; ++a) {
-                sprintf(achieveName, "ACHIEVEMENT_%d", a); // thanks steamdb
+                sprintf(achieveName, "ACHIEVEMENT_%d", a);
                 if (SteamUserStats()->GetAchievement(achieveName, &isAchieved) && isAchieved) {
                     SetAchievement(a, true);
                 }
