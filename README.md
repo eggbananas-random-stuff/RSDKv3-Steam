@@ -23,7 +23,7 @@ A complete decompilation of Retro Engine v3.
     * Click on the launch options text box
     * Type `"./RSDKv3.appimage" %command%`
 
-+ You can also use your main save by copying it to the game folder
++ If you want to transfer a save file to Steam, the save location can be different depending on your platform;
 + Remember to replace `<STEAM USER ID>` with your steam user ID
 + (If there is only one folder in the `userdata` folder, just use that)
   * Windows
@@ -32,7 +32,6 @@ A complete decompilation of Retro Engine v3.
     * `~/.local/share/Steam/userdata/<STEAM USER ID>/200940/local`
   * Linux (Flatpak)
     * `~/.var/app/com.valvesoftware.Steam/data/Steam/userdata/<STEAM USER ID>/200940/local`
-+ Copy the `Sdata.bin` file to the game folder, then rename the copy to `SData.bin`
 
 # **SUPPORT THE OFFICIAL RELEASE OF SONIC CD**
 + Without assets from the official release, this decompilation will not run.
@@ -71,7 +70,7 @@ Even if your platform isn't supported by the official releases, you **must** buy
   * `F5` will reload the current scene, as well as all assets and scripts.
   * `F8` and `F9` will visualize touch screen and object hitboxes.
   * `F10` will activate a palette overlay that shows the game's 8 internal palettes in real time.
-* If `useSteamDir` is set in the config (Windows only), the game will try to load savedata from Steam's `userdata` directory (where the original Steam version saves to).
+* If `useSteamDir` is set in the config, the game will try to load savedata from Steam's `userdata` directory (where the original Steam version saves to).
 * Added the idle screen dimming feature from Sonic Mania Plus, as well as allowing the user to disable it or set how long it takes for the screen to dim.
 
 # How to Build
