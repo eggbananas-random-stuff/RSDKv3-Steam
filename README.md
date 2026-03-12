@@ -13,7 +13,7 @@ A complete decompilation of Retro Engine v3.
 
 + Setting up the game itself
   * Windows
-    * Rename the `soniccd.exe` file in the game folder to something else
+    * Rename the `soniccd.exe` file in the game folder to anything else
     * Rename the `RSDKv3.exe` file (that you have downloaded/compiled) to `soniccd.exe`, then insert it into the game folder
   * Steam Deck/Linux
     * Insert the `RSDKv3.appimage` file (that you have downloaded/compiled) into the game folder
@@ -21,7 +21,7 @@ A complete decompilation of Retro Engine v3.
     * Click the cog/settings icon
     * Select "`Properties...`" > "`General`"
     * Click on the launch options text box
-    * Type `"./RSDKv3.appimage" %command%`
+    * Type `"./RSDKv3.AppImage" %command%`
 
 + If you want to transfer a save file to Steam, the save location can be different depending on your platform;
 + Remember to replace `<STEAM USER ID>` with your steam user ID
