@@ -3024,9 +3024,14 @@ void EnemyCollision(int left, int top, int right, int bottom)
 {
     TouchCollision(left, top, right, bottom);
 
-#if RSDK_AUTOBUILD
     // Skip the hammer hitboxes on autobuilds, just in case
-    return;
+#if RSDK_AUTOBUILD
+    bool foundDLC = false;
+#if RETRO_USE_STEAMWORKS
+    foundDLC = hasPlusDLC;
+#endif
+    if (!foundDLC)
+        return;
 #endif
 
     Player *player = &playerList[activePlayer];

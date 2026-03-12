@@ -287,7 +287,7 @@ void InitUserdata()
     if (Engine.steamInitialised
      && Engine.useSteamDir
      && Engine.steamAppID == STEAMGAME_SONIC_CD
-     && SteamUser()->GetUserDataFolder(gamePath, sizeof(gamePath) - 1)) {
+     && SteamUser()->GetUserDataFolder(gamePath, sizeof(gamePath))) {
         PrintLog("Found CD Steam save directory: '%s'", gamePath);
         sprintf(gamePath, "%s/", gamePath);
     } else {
@@ -1024,10 +1024,8 @@ int AwardSteamAchievement(int steamGameID, const char *achievementName, int achi
             }
             break;
         case 1:
-            if (!SteamUserStats()->GetStat(achievementName, &achieveValue)) {
-                SteamUserStats()->GetStat(achievementName, &achieveValue);
-                SteamUserStats()->SetStat(achievementName, achieveValue + progressIncrement);
-                
+            if (SteamUserStats()->GetStat(achievementName, &achieveValue) && progressIncrement != 0) {
+                SteamUserStats()->SetStat(achievementName, (achieveValue += progressIncrement)); // yeah i think you can do that
                 SteamUserStats()->StoreStats();
             }
             break;

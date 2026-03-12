@@ -304,7 +304,10 @@ void RetroEngine::Init()
 #endif
 
 #if RETRO_USE_STEAMWORKS
+    // thanks v4+
+
     steamInitialised = false;
+    hasPlusDLC       = false;
     steamAppID       = 0;
 
     SteamErrMsg errMsg;
@@ -322,7 +325,13 @@ void RetroEngine::Init()
     } else {
         PrintLog("Steam initialised successfully.");
         steamInitialised = true;
+        hasPlusDLC       = SteamApps()->BIsDlcInstalled(2343200); // Origins Plus DLC
         steamAppID       = SteamUtils()->GetAppID();
+        
+        if (hasPlusDLC)
+            PrintLog("Origins Plus DLC found.");
+        else
+            PrintLog("Origins Plus DLC not found.");
     }
 #endif
     InitUserdata();
@@ -374,22 +383,26 @@ void RetroEngine::Init()
     renderFrameIndex = targetRefreshRate / lower;
     skipFrameIndex   = refreshRate / lower;
 
+#if !RETRO_USE_ORIGINAL_CODE || RETRO_USE_STEAMWORKS
+    char rootDir[0x80];
+    char pathBuffer[0x80];
+    char textBuf[0x100];
+
+#if RETRO_PLATFORM == RETRO_UWP
+    if (!usingCWD)
+        sprintf(rootDir, "%s/", getResourcesPath());
+    else
+        sprintf(rootDir, "%s", "");
+#elif RETRO_PLATFORM == RETRO_OSX
+    sprintf(rootDir, "%s/", gamePath);
+#else
+    sprintf(rootDir, "%s", "");
+#endif
+#endif
+
 #if !RETRO_USE_ORIGINAL_CODE
     // "error message"
     if (!running) {
-        char rootDir[0x80];
-        char pathBuffer[0x80];
-
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(rootDir, "%s/", getResourcesPath());
-        else
-            sprintf(rootDir, "%s", "");
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(rootDir, "%s/", gamePath);
-#else
-        sprintf(rootDir, "%s", "");
-#endif
         sprintf(pathBuffer, "%s%s", rootDir, "usage.txt");
 
         FileIO *f;
@@ -398,7 +411,6 @@ void RetroEngine::Init()
             return;
         }
 
-        char textBuf[0x100];
         sprintf(textBuf, "RETRO ENGINE v3 USAGE:\n");
         fWrite(textBuf, 1, strlen(textBuf), f);
 
@@ -412,6 +424,22 @@ void RetroEngine::Init()
         fWrite(textBuf, 1, strlen(textBuf), f);
 
         fClose(f);
+    }
+#endif
+
+#if RETRO_USE_STEAMWORKS
+    sprintf(pathBuffer, "%s%s", rootDir, "steam_appid.txt");
+
+    if (!fOpen(pathBuffer, "r")) {
+        FileIO *f;
+        if ((f = fOpen(pathBuffer, "w")) == NULL) {
+            PrintLog("ERROR: Couldn't open file '%s' for writing!", "steam_appid.txt");
+        } else {
+            sprintf(textBuf, "%d\n", STEAMGAME_SONIC_CD);
+            fWrite(textBuf, 1, strlen(textBuf), f);
+
+            fClose(f);
+        }
     }
 #endif
 }
@@ -1194,6 +1222,11 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
         CloseFile();
 
 #if RETRO_USE_MOD_LOADER
+        bool foundDLC = false;
+#if RETRO_USE_STEAMWORKS
+        foundDLC = hasPlusDLC;
+#endif
+
         LoadXMLWindowText();
         LoadXMLVariables();
         LoadXMLPalettes();
@@ -1207,7 +1240,7 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
         SetGlobalVariableByName("Engine.DeviceType", RETRO_GAMEPLATFORM);
 
         SetGlobalVariableByName("Engine.Standalone", 1);
-        SetGlobalVariableByName("game.hasPlusDLC", !RSDK_AUTOBUILD);
+        SetGlobalVariableByName("game.hasPlusDLC",  foundDLC || !RSDK_AUTOBUILD);
 #endif
 
 #if !RETRO_USE_ORIGINAL_CODE
@@ -1426,16 +1459,26 @@ void RetroEngine::Callback(int callbackID)
             break;
         case NOTIFY_TOUCH_EMERALD: PrintLog("NOTIFY: TouchEmerald() -> %d", notifyParam1); break;
         case NOTIFY_STATS_ENEMY: PrintLog("NOTIFY: StatsEnemy() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
-            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_14_DEFEAT_ENEMY_BY_SPIN_DASH", 1, notifyParam2);
-            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_15_NOVICE_HERO", 1, notifyParam1);
-            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_29_HERO_FOR_ALL", 1, notifyParam1);
+            // Gallant Spin Dash
+            if (AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "DEFEAT_ENEMY_BY_SPIN_DASH", 1, notifyParam1) >= 30)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_14_DEFEAT_ENEMY_BY_SPIN_DASH");
+            
+            // Newbie Hero
+            if (AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "DEFEAT_ENEMY", 1, notifyParam1) >= 50)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_15_NOVICE_HERO");
+            
+            // Everyone's Hero
+            if (AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "DEFEAT_ENEMY", 1, notifyParam1) >= 200)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_29_HERO_FOR_ALL");
             break;
         case NOTIFY_STATS_CHARA_ACTION: PrintLog("NOTIFY: StatsCharaAction() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
             if (notifyParam2 == 1)
                 AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_19_TAILS_FLYING");
             break;
         case NOTIFY_STATS_RING: PrintLog("NOTIFY: StatsRing() -> %d", notifyParam1);
-            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_13_RING_COLLECTOR", 1, notifyParam1);
+            
+            if (AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "RING_COUNT", 1, notifyParam1) >= 200)
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_13_RING_COLLECTOR");
             break;
         case NOTIFY_STATS_MOVIE:
             PrintLog("NOTIFY: StatsMovie() -> %d", notifyParam1);
