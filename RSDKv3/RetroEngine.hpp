@@ -533,11 +533,11 @@ public:
 #if RETRO_USE_MOD_LOADER
     bool modMenuCalled = false;
 #endif
-#if RETRO_USE_STEAMWORKS
+//#if RETRO_USE_STEAMWORKS // easier to just check if this is true lol
     bool steamInitialised = false;
     bool hasPlusDLC       = false;
     int steamAppID        = 0;
-#endif
+//#endif
 
     int gameTypeID          = 0;
     const char *releaseType = "Use_Standalone";

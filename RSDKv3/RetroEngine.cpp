@@ -1442,7 +1442,9 @@ void RetroEngine::Callback(int callbackID)
         case NOTIFY_ADD_COIN:
             PrintLog("NOTIFY: AddCoin() -> %d", notifyParam1);
             SetGlobalVariableByName("game.coinCount", GetGlobalVariableByName("game.coinCount") + notifyParam1);
+            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "TotalCoins", 1, notifyParam1)
             break;
+            
         case NOTIFY_KILL_ENEMY: PrintLog("NOTIFY: KillEnemy() -> %d", notifyParam1); break;
         case NOTIFY_SAVESLOT_SELECT: PrintLog("NOTIFY: SaveSlotSelect() -> %d", notifyParam1); break;
         case NOTIFY_FUTURE_PAST:
@@ -1450,13 +1452,16 @@ void RetroEngine::Callback(int callbackID)
             objectEntityList[objectLoop].state++;
             AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_07_SONICCD_TIME_WARP");
             break;
+            
         case NOTIFY_GOTO_FUTURE_PAST: PrintLog("NOTIFY: GotoFuturePast() -> %d", notifyParam1); break;
         case NOTIFY_BOSS_END: PrintLog("NOTIFY: BossEnd() -> %d", notifyParam1); break;
         case NOTIFY_SPECIAL_END: PrintLog("NOTIFY: SpecialEnd() -> %d", notifyParam1); break;
         case NOTIFY_DEBUGPRINT: PrintLog("NOTIFY: DebugPrint() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
         case NOTIFY_KILL_BOSS: PrintLog("NOTIFY: KillBoss() -> %d", notifyParam1);
-            AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_08_SONICCD_WIN_METAL_SONIC");
+            if ()
+                AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_08_SONICCD_WIN_METAL_SONIC");
             break;
+            
         case NOTIFY_TOUCH_EMERALD: PrintLog("NOTIFY: TouchEmerald() -> %d", notifyParam1); break;
         case NOTIFY_STATS_ENEMY: PrintLog("NOTIFY: StatsEnemy() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3);
             // Gallant Spin Dash
@@ -1476,7 +1481,7 @@ void RetroEngine::Callback(int callbackID)
                 AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_19_TAILS_FLYING");
             break;
         case NOTIFY_STATS_RING: PrintLog("NOTIFY: StatsRing() -> %d", notifyParam1);
-            
+            // Ring Collector
             if (AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "RING_COUNT", 1, notifyParam1) >= 200)
                 AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_13_RING_COLLECTOR");
             break;
@@ -1493,6 +1498,7 @@ void RetroEngine::Callback(int callbackID)
             Engine.gameMode   = ENGINE_MAINGAME;
             stageListPosition = 0;
             
+            // Cleared Sonic CD
             AwardSteamAchievement(STEAMGAME_SONIC_ORIGINS, "ID_32_SONICCD_CLEAR_ALL_STAGE");
             break;
         case NOTIFY_STATS_PARAM_1: PrintLog("NOTIFY: StatsParam1() -> %d, %d, %d", notifyParam1, notifyParam2, notifyParam3); break;
